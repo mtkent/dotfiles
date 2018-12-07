@@ -1,10 +1,14 @@
 #autojump
 [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
 
+#autocompletion
+[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+
 #colors
 #export PS1="[$(tput bold)\]\[$(tput setaf 7)\]\h\[$(tput setaf 4)\]-\[$(tput setaf 6)\]\t:\[$(tput setaf 7)\]\W\[$(tput setaf 5)\]\\$ \[$(tput sgr0)\]"
 
-export PS1="\w$ "
+#export PS1="\w$ "
+export PS1="\[\033[33m\]\w\[\033[00m\]$ "
 
 alias mb="~/src/qm2/scripts/monobuild.sh"
 alias mbs="mb -c setVersion"
@@ -13,6 +17,8 @@ alias mbr="mb -c reset"
 alias mbg="mb -c showDependencyGraph"
 
 export PATH=~/bin/Sencha/Cmd/6.2.1.29:$PATH
+export PATH=~/bin/Sencha/Cmd/6.5.1.240:$PATH
+
 #########################
 ##### Basic Aliases #####
 #########################
@@ -64,6 +70,7 @@ alias man="man -a"
 # Is someone looking over your shoulder?
 alias c="clear"
 alias logout="clear; logout"
+
 # Searching for packages - I added quotes around $OS_TYPE because it was giving me a warn about [
 if [ "$OS_TYPE" = 'macos' ]; then
     # I use homebrew
@@ -127,6 +134,7 @@ alias yoink='git stash && git pull && git stash pop'
 alias yolo='git push -f'
 alias gsrebase='git-svn-rebase'
 alias prune="git branch -r | awk '{print \$1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print \$1}' | xargs git branch -d"
+alias gmd="git fetch origin develop:develop"
 
 #don't need?
 alias gh='hg'
@@ -144,6 +152,10 @@ alias dps='docker ps --format "table {{.ID}}\t{{.CreatedAt}}\t{{.Status}}\t{{.Po
 alias d='docker'
 alias docker-login='eval $(aws ecr get-login --registry-ids=736692106039 --no-include-email)'
 alias docker-kill='docker ps -q | xargs docker rm -f'
+alias docker-biggest-hammer='docker-kill && docker system prune && docker rmi -f $(docker images -q)'
+alias docker-eval='eval $(docker-machine env default)'
+alias dports="docker ps --format \"{{.Ports}}: {{.Names}}\""
+
 #####################
 ##### Compiling #####
 #####################
@@ -154,13 +166,19 @@ alias javac='cowsay "javac"; javac'
 # Java with remote debugging enabled
 alias jdebug='java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005'
 
-eval $(docker-machine env default)
+alias awsmarinatest='aws ecs list-services --cluster ecscluster-staging --profile ecs-describe | grep marina'
 
 ##### Clearspring #####
 # Completion for cssh (see ~/bin/cssh)
 complete -F _ssh cssh
 
 source /Users/marinakent/src/startup_scripts/check_docker_machine_ip.sh
+docker-eval
+
+alias grdp='grd publishToMavenLocal'
+alias grd='gr -DuseMonobuildArtifact=true'
+
+alias dabman-error="curl -o - https://databricksmanager-production.internal.quanticmind.com/metrics/errored | jq '.metrics.jobs.error |= sort_by(.created)'"
 
 # Gradle find
 function gr() {
