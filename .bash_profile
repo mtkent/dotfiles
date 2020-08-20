@@ -171,8 +171,6 @@ alias javac='cowsay "javac"; javac'
 # Java with remote debugging enabled
 alias jdebug='java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005'
 
-alias awsmarinatest='aws ecs list-services --cluster ecscluster-staging --profile ecs-describe | grep marina'
-
 ##### Clearspring #####
 # Completion for cssh (see ~/bin/cssh)
 complete -F _ssh cssh
@@ -182,8 +180,6 @@ complete -F _ssh cssh
 
 alias grdp='grd publishToMavenLocal'
 alias grd='gr -DuseMonobuildArtifact=true'
-
-alias dabman-error="curl -o - https://databricksmanager-production.internal.quanticmind.com/metrics/errored | jq '.metrics.jobs.error |= sort_by(.created)'"
 
 #ruby and square
 alias port3000="lsof -wni tcp:3000"
@@ -239,11 +235,6 @@ stage() {
 # sqssh into a prod square node - param is app name
 prod() {
   sqssh "$1" sjc2b console
-}
-
-# give either blue or green to ssh into
-sc_prod() {
-  sqssh supportcenter sjc2b -E production-"$1"
 }
 
 me (){
