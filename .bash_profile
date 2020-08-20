@@ -1,23 +1,26 @@
+##############################################################
+# load Square specific bash_profile
+##############################################################
+source ~/Development/config_files/square/bash_profile
+##############################################################
+
+###########################################
+# Feel free to make your own changes below.
+###########################################
+
 #autojump
 [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
 
 #autocompletion
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
+export PS1="\[\033[33m\]\w\[\033[00m\] (\$(git branch 2>/dev/null | grep '^*' | colrm 1 2)) \$ "
+
 #colors
 #export PS1="[$(tput bold)\]\[$(tput setaf 7)\]\h\[$(tput setaf 4)\]-\[$(tput setaf 6)\]\t:\[$(tput setaf 7)\]\W\[$(tput setaf 5)\]\\$ \[$(tput sgr0)\]"
 
 #export PS1="\w$ "
-export PS1="\[\033[33m\]\w\[\033[00m\]$ "
-
-alias mb="~/src/qm2/scripts/monobuild.sh"
-alias mbs="mb -c setVersion"
-alias mbb="mb -c build"
-alias mbr="mb -c reset"
-alias mbg="mb -c showDependencyGraph"
-
-export PATH=~/bin/Sencha/Cmd/6.2.1.29:$PATH
-export PATH=~/bin/Sencha/Cmd/6.5.1.240:$PATH
+#export PS1="\[\033[33m\]\w\[\033[00m\]$ "
 
 #########################
 ##### Basic Aliases #####
@@ -34,6 +37,7 @@ alias ld="ls -d"
 #alias rm="rm -i"    # Make rming a slow and painful process
 # Show most recent files at the bottom
 alias ltr="ls -ltr"
+alias vi="vim"
 
 # Why doesn't everyone have these?
 alias ..="cd .."
@@ -112,7 +116,7 @@ alias chromedev="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome 
 # Things I usually want
 alias tcpdump="tcpdump -vvnX -s0"
 alias mci="mvn clean install"
-alias gcb="./gradlew clean build"
+#alias gcb="./gradlew clean build"
 #alias gr="./gradlew"
 alias gw="./gradlew"
 alias rubocop="rubocop -DE"
@@ -135,6 +139,7 @@ alias yolo='git push -f'
 alias gsrebase='git-svn-rebase'
 alias prune="git branch -r | awk '{print \$1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print \$1}' | xargs git branch -d"
 alias gmd="git fetch origin develop:develop"
+alias gl="git log --stat"
 
 #don't need?
 alias gh='hg'
@@ -153,7 +158,7 @@ alias d='docker'
 alias docker-login='eval $(aws ecr get-login --registry-ids=736692106039 --no-include-email)'
 alias docker-kill='docker ps -q | xargs docker rm -f'
 alias docker-biggest-hammer='docker-kill && docker system prune && docker rmi -f $(docker images -q)'
-alias docker-eval='eval $(docker-machine env default)'
+#alias docker-eval='eval $(docker-machine env default)'
 alias dports="docker ps --format \"{{.Ports}}: {{.Names}}\""
 
 #####################
@@ -172,13 +177,25 @@ alias awsmarinatest='aws ecs list-services --cluster ecscluster-staging --profil
 # Completion for cssh (see ~/bin/cssh)
 complete -F _ssh cssh
 
-source /Users/marinakent/src/startup_scripts/check_docker_machine_ip.sh
-docker-eval
+#source /Users/marinakent/src/startup_scripts/check_docker_machine_ip.sh
+#docker-eval
 
 alias grdp='grd publishToMavenLocal'
 alias grd='gr -DuseMonobuildArtifact=true'
 
 alias dabman-error="curl -o - https://databricksmanager-production.internal.quanticmind.com/metrics/errored | jq '.metrics.jobs.error |= sort_by(.created)'"
+
+#ruby and square
+alias port3000="lsof -wni tcp:3000"
+alias kc="kochiku --canary"
+alias wtf_ruby="rvm reinstall $(rvm current)"
+alias rc='rails c'
+alias rspec='be rails spec'
+alias rs='be rails spec'
+
+# make keystrokes faster
+# defaults write NSGlobalDomain KeyRepeat -int 1
+# defaults write NSGlobalDomain InitialKeyRepeat -int 10
 
 # Gradle find
 function gr() {
@@ -213,3 +230,29 @@ function gr() {
 
     cd $PREVIOUS_DIR
 }
+
+# sqssh into a staging square node - param is app name
+stage() {
+  sqssh "$1" sjc1 console
+}
+
+# sqssh into a prod square node - param is app name
+prod() {
+  sqssh "$1" sjc2b console
+}
+
+# give either blue or green to ssh into
+sc_prod() {
+  sqssh supportcenter sjc2b -E production-"$1"
+}
+
+me (){
+  pair marina
+}
+
+me_and (){
+  pair marina $1 $2 $3 $4
+}
+
+
+
