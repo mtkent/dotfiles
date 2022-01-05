@@ -140,6 +140,7 @@ alias gsrebase='git-svn-rebase'
 alias prune="git branch -r | awk '{print \$1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print \$1}' | xargs git branch -d"
 alias gmd="git fetch origin develop:develop"
 alias gl="git log --stat"
+alias cmp="openpr"
 
 #don't need?
 alias gh='hg'
@@ -245,5 +246,23 @@ me_and (){
   pair marina $1 $2 $3 $4
 }
 
+# https://tighten.co/blog/open-github-pull-request-from-terminal/
+function openpr() {
+  github_url=`git remote -v | awk '/fetch/{print $2}' | sed -Ee 's#(git@|git://)#https://#' -e 's@com:@com/@' -e 's%\.git$%%'`;
+  branch_name=`git symbolic-ref HEAD | cut -d"/" -f 3,4,5,6,7,8`;
+  pr_url="https://"$github_url"/compare/master..."$branch_name
+  open $pr_url;
+}
+
+# Run git push and then immediately open the Pull Request URL
+function gpr() {
+  git push origin HEAD
+
+  if [ $? -eq 0 ]; then
+    openpr
+  else
+    echo 'failed to push commits and open a pull request.';
+  fi
+}
 
 
